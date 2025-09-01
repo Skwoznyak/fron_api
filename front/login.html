@@ -117,7 +117,7 @@
         });
         console.log('Response status:', response.status);
         console.log('Response headers:', [...response.headers.entries()]);
-        console.log('Response ok:', response.ok);
+        console.log('Cookies after login:', document.cookie);
 
         if (!response.ok) {
           const errorData = await response.text();
@@ -127,10 +127,8 @@
 
         const data = await response.json();
         console.log('Login response:', data);
-        console.log('Cookies after login:', document.cookie);
-
-        console.log('Redirecting to resumes.html');
-        window.location.href = 'resumes.html';
+        console.log('Redirecting to /resumes.html');
+        window.location.href = '/resumes.html';
       } catch (err) {
         console.error('Fetch error:', err.message, err);
         errorElement.textContent = `Ошибка: ${err.message}`;
