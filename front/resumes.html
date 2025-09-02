@@ -132,17 +132,13 @@
 
     // Загрузка списка резюме
     async function fetchResumes() {
-      console.log('Cookies before fetch:', document.cookie);
       try {
         const response = await fetch(`${API_URL}/resumes`, {
           method: 'GET',
           credentials: 'include',
         });
-        console.log('Response status:', response.status);
-        console.log('Response headers:', [...response.headers.entries()]);
         if (response.status === 401) {
-          console.log('Unauthorized, cookies at 401:', document.cookie);
-          window.location.href = '/login.html';
+          window.location.href = 'login.html';
           return;
         }
         if (!response.ok) {
@@ -151,7 +147,6 @@
         const resumes = await response.json();
         renderResumes(resumes);
       } catch (err) {
-        console.error('Fetch error:', err);
         errorElement.textContent = err.message;
         errorElement.classList.remove('hidden');
       }
@@ -210,7 +205,7 @@
           body: JSON.stringify({ title, context }),
         });
         if (response.status === 401) {
-          window.location.href = '/login.html';
+          window.location.href = 'login.html';
           return;
         }
         if (!response.ok) {
@@ -239,7 +234,7 @@
           body: JSON.stringify({ title, context }),
         });
         if (response.status === 401) {
-          window.location.href = '/login.html';
+          window.location.href = 'login.html';
           return;
         }
         if (!response.ok) {
@@ -272,7 +267,7 @@
           credentials: 'include',
         });
         if (response.status === 401) {
-          window.location.href = '/login.html';
+          window.location.href = 'login.html';
           return;
         }
         if (!response.ok) {
@@ -294,15 +289,20 @@
           credentials: 'include',
         });
         if (response.status === 401) {
-          window.location.href = '/login.html';
+          window.location.href = 'login.html';
           return;
         }
         if (!response.ok) {
           throw new Error('Ошибка при улучшении резюме');
         }
         const data = await response.json();
+        // Изменение: Обновляем основной контекст резюме сразу после улучшения
+        resumeContext.textContent = data.improved_context;
+        // Опционально: Показываем улучшенную версию в отдельном блоке (можно закомментировать, если не нужно)
         improvedText.textContent = data.improved_context;
         improvedContext.classList.remove('hidden');
+        // Изменение: Перезагружаем список резюме, чтобы обновить in-memory данные (для последующих кликов)
+        await fetchResumes();
       } catch (err) {
         errorElement.textContent = err.message;
         errorElement.classList.remove('hidden');
